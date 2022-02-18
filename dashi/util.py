@@ -1,17 +1,20 @@
 #!/usr/bin/env python
-import requests
 import json
-import redis
-from urlparse import urlparse
-from datetime import timedelta
 from ast import literal_eval
+from datetime import timedelta
 from time import sleep
+from urllib.parse import urlparse
+
+import redis
+import requests
+from urllib3 import disable_warnings
+from urllib3.exceptions import InsecureRequestWarning
 
 
 class jenkinsData(object):
 
     def __init__(self, config):
-        requests.packages.urllib3.disable_warnings()
+        disable_warnings(InsecureRequestWarning)
         self.config = config
         self.host = config['host']
         self.user = config['user']
@@ -59,7 +62,7 @@ class jenkinsData(object):
                         passCount = buildTestReuslt['passCount']
                         failCount = buildTestReuslt['failCount']
                     else:
-                        print 'no test result found'
+                        print('no test result found')
                         passCount = 0
                         failCount = 0
                 else:
@@ -67,7 +70,7 @@ class jenkinsData(object):
                         passCount = buildTestReuslt['passCount']
                         failCount = buildTestReuslt['failCount']
                     else:
-                        print 'no test result found'
+                        print('no test result found')
                         passCount = 0
                         failCount = 0
 
@@ -132,7 +135,7 @@ class jobPoller(object):
             sleep(self.jenkins_poll_interval)
             result = []
             for host in self.config['jenkins']:
-                print 'jenkins poll %s' % (host['host'])
+                print('jenkins poll %s' % (host['host']))
                 _jenkins_data = jenkinsData(host)
                 result.extend(_jenkins_data.getLastResult())
 

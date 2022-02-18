@@ -6,8 +6,8 @@ from dashi.util import jenkinsData, redisPoller, jobPoller, redisPool
 
 app = Flask(__name__, static_url_path='', static_folder='public')
 app.add_url_rule('/', 'root', lambda: app.send_static_file('index.html'))
-configFile = file('config.yml', 'r')
-config = yaml.load(configFile)
+configFile = open('config.yml', 'r')
+config = yaml.safe_load(configFile)
 
 
 @app.route('/api/result', methods=['GET'])
@@ -16,10 +16,10 @@ def result_handler():
         _redis = redisPoller(config, redis_pool)
         result = _redis.get('jenkins-result')
         if not result:
-            print 'no redis data found!'
+            print('no redis data found!')
             result = []
             for host in config['jenkins']:
-                print 'jenkins poll %s' % (host['host'])
+                print('jenkins poll %s' % (host['host']))
                 _jenkins_data = jenkinsData(host)
                 result.extend(_jenkins_data.getLastResult())
 
